@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 var axios = require("axios");
 var moment = require('moment');
 var keys = require("./keys.js");
@@ -34,7 +35,29 @@ if (command === "concert-this") {
     })
 }
 else if (command === "spotify-this-song") {
-    console.log("spotify API");
+    var song = "";
+    for (var i = 3; i < query.length; i++) {
+        song += query[i] + " ";
+       }
+    if (!song){
+        song = "The Sign";
+    }
+    spotify
+    .search({type: 'track', query: song, limit: 1})
+    .then(response => {
+
+        console.log("Album Name: " + response.tracks.items[0].album.name);
+
+        for(var j = 0; j < response.tracks.items[0].artists.length;j++){
+            console.log("Artists: " + response.tracks.items[0].artists[j].name);
+        }
+        console.log("Song Name: " + response.tracks.items[0].name);
+        console.log("Listen to the song here: " + response.tracks.items[0].external_urls.spotify);
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
 }
 else if (command === "movie-this") {
     console.log("omdb API");
