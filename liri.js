@@ -31,7 +31,7 @@ if (command === "concert-this") {
             }
         }
     ).catch(err => {
-        console.log(err)
+        console.log("Please check spelling. Otherwise band not found")
     })
 }
 else if (command === "spotify-this-song") {
@@ -49,18 +49,41 @@ else if (command === "spotify-this-song") {
         console.log("Album Name: " + response.tracks.items[0].album.name);
 
         for(var j = 0; j < response.tracks.items[0].artists.length;j++){
-            console.log("Artists: " + response.tracks.items[0].artists[j].name);
+            console.log("Artist(s): " + response.tracks.items[0].artists[j].name);
         }
         console.log("Song Name: " + response.tracks.items[0].name);
         console.log("Listen to the song here: " + response.tracks.items[0].external_urls.spotify);
     })
     .catch(err => {
-        console.log(err);
+        console.log("Please check spelling. Otherwise artist not found");
     })
 
 }
 else if (command === "movie-this") {
-    console.log("omdb API");
+    var movie = "";
+    for (var i = 3; i < query.length; i++) {
+        if (i > 3 && i < query.length) {
+            movie = movie + "+" +  query[i];
+          } else {
+            movie += query[i];
+        
+          }
+    }
+      
+    axios.get("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=3139364f").then(
+        function(response){
+            console.log("Title: " + response.data.Title);
+            console.log("Release Year: " + response.data.Year);
+            console.log("Imdb Rating: " + response.data.imdbRating);
+            console.log("Rotten Tomatoes Rating: " + response.data.Ratings[1].Value);
+            console.log("Country: " + response.data.Country);
+            console.log("Language(s): " + response.data.Language);
+            console.log("Plot: " + response.data.Plot);
+            console.log("Actors: " + response.data.Actors);
+        }
+    ).catch(err => {
+        console.log("Please check spelling. Otherwise movie not found")
+    })
 }
 else if (command === "do-what-it-says") {
     console.log("ok man don't be so pushy");
