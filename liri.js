@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+var fs = require("fs");
 var axios = require("axios");
 var moment = require('moment');
 var keys = require("./keys.js");
@@ -14,6 +15,9 @@ if (command === "concert-this") {
     var band = "";
     for (var i = 3; i < query.length; i++) {
      band += query[i];
+    }
+    if (!band){
+        band = "Maroon 5";
     }
       
     axios.get("https://rest.bandsintown.com/artists/" + band + "/events?app_id=codingbootcamp").then(
@@ -40,7 +44,7 @@ else if (command === "spotify-this-song") {
         song += query[i] + " ";
        }
     if (!song){
-        song = "The Sign";
+        song = "The Sign Ace";
     }
     spotify
     .search({type: 'track', query: song, limit: 1})
@@ -69,6 +73,9 @@ else if (command === "movie-this") {
         
           }
     }
+    if (!movie){
+        movie = "Mr Nobody";
+    }
       
     axios.get("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=3139364f").then(
         function(response){
@@ -86,7 +93,31 @@ else if (command === "movie-this") {
     })
 }
 else if (command === "do-what-it-says") {
-    console.log("ok man don't be so pushy");
+    
+    fs.readFile("random.txt", "utf8", (error, data) => {
+        
+        var formatData = data.split(",");
+        
+        // command = formatData[0];
+        query[3] = formatData[1];
+        var song = query[3];
+        
+        spotify
+        .search({type: 'track', query: song, limit: 1})
+        .then(response => {
+
+            console.log("Album Name: " + response.tracks.items[0].album.name);
+
+            for(var j = 0; j < response.tracks.items[0].artists.length;j++){
+                console.log("Artist(s): " + response.tracks.items[0].artists[j].name);
+            }
+            console.log("Song Name: " + response.tracks.items[0].name);
+            console.log("Listen to the song here: " + response.tracks.items[0].external_urls.spotify);
+        })
+        .catch(err => {
+            console.log("Please check spelling. Otherwise artist not found");
+        })
+    })
 }else{
-    console.log("error command not found")
+    console.log("error command not found. Commands are... concert-this <bandname> ||spotify-this-song <songtitle> || movie-this <movietitle> ||  do-what-it-says")
 }
